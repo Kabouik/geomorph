@@ -42,18 +42,20 @@
 #'   scale by using the option MultScale=TRUE.
 #'   }
 #' 
-#' @param filelist A list of names of jpeg images to be digitized. 
+#' @param filelist A list of names of jpeg images to be digitized.
 #' @param nlandmarks Number of landmarks to be digitized.
 #' @param scale A vector containing the length of the scale to be placed on each image.
-#' @param tpsfile The name of a TPS file to be created or read
-#' @param MultScale A logical option indicating if the coordinates should be pre-multiplied by scale
-#' @param verbose logical. User decides whether to digitize in verbose or silent format (see details), default is verbose
+#' @param tpsfile The name of a TPS file to be created or read.
+#' @param MultScale A logical option indicating if the coordinates should be pre-multiplied by scale.
+#' @param interactive.zoom A logical option to allow interactive zooming before digitizing the next landmark (requires \code{\link[zoom]{zoom}}.
+#' @param marker The symbol to mark landmarks (see \code{\link[pch]{graphics}}).
+#' @param verbose logical. User decides whether to digitize in verbose or silent format (see details), default is verbose.
 #' @return Function returns a tps file containing the digitized landmark coordinates.
 #' @keywords digitizing
 #' @export
 #' @author Dean Adams, Erik Otarola-Castillo and Emma Sherratt
-#' @seealso  \code{\link[jpeg]{readJPEG}} (for JPEG input)
-digitize2d <- function (filelist, nlandmarks, scale=NULL, tpsfile, MultScale=FALSE, verbose = TRUE) 
+#' @seealso  \code{\link[jpeg]{readJPEG}} (for JPEG input), {\link[zoom]{zoom}} (for interactive.zoom)
+digitize2d <- function (filelist, nlandmarks, scale = NULL, tpsfile, MultScale = FALSE, interactive.zoom = FALSE, marker = 3, verbose = TRUE) 
 {
   flist <- dir()
   if (sum(which(flist == tpsfile)) == 0) {
@@ -93,7 +95,7 @@ digitize2d <- function (filelist, nlandmarks, scale=NULL, tpsfile, MultScale=FAL
                                                         dim(specimen)[1], length.out = 10), type = "n",
                                                         asp = 1, tck = 0, xaxt = "n", yaxt = "n")
     rasterImage(specimen, 1, 1, dim(specimen)[2], dim(specimen)[1])
-    zm(type = "session")
+    zm(type = "navigation")
     if (is.null(scale)) {
      cat("Scale not provided! Proceed with caution.\n") 
       scalebar = NULL
@@ -104,12 +106,24 @@ digitize2d <- function (filelist, nlandmarks, scale=NULL, tpsfile, MultScale=FAL
     }
     selected <- matrix(NA, nrow = nlandmarks, ncol = 2)
     fix <- NULL
+    if (interactive.zoom == TRUE) {
+      for (ii in 1:nlandmarks) {
+        cat("Set desired zoom level for next landmark\n")
+        zm(type = "navigation")
+        keep <- ans <- NULL
+        fix <- locator(n = 1, type = "p", col = "red",
+                       cex = 4, pch = marker)
+        cat(paste("Keep Landmark ", ii, "(y/n/a)?"), "\n")
+        ans <- readLines(n = 1)
+## TEMP END
+        }
+      }
     if (verbose == TRUE) {
       for (ii in 1:nlandmarks) {
         cat("Select landmark ", ii, "\n")
         keep <- ans <- NULL
         fix <- locator(n = 1, type = "p", col = "red", 
-                       cex = 4, pch = 3)
+                       cex = 4, pch = marker)
         cat(paste("Keep Landmark ", ii, "(y/n/a)?"), 
             "\n")
         ans <- readLines(n = 1)
@@ -120,15 +134,15 @@ digitize2d <- function (filelist, nlandmarks, scale=NULL, tpsfile, MultScale=FAL
         if (ans == "a") {
           selected[ii, 1] <- NA
           selected[ii, 2] <- NA
-          points(fix, type = "n", col = "red", cex = 1, pch = 3)
-          zm(type = "session")
+          points(fix, type = "n", col = "red", cex = 1, pch = marker)
+          zm(type = "navigation")
         }
         if (ans == "n") {
           cat(paste("Select Landmark ", ii, " Again"), "\n")
         }
         while (ans == "n") {
           fix <- locator(n = 1, type = "p", col = "red", 
-                         cex = 4, pch = 3)
+                         cex = 4, pch = marker)
           cat(paste("Keep Landmark ", ii, "(y/n)?"),  "\n")
           ans <- readLines(n = 1)
           if (ans == "y") {
@@ -145,7 +159,7 @@ digitize2d <- function (filelist, nlandmarks, scale=NULL, tpsfile, MultScale=FAL
       cat("Select landmarks 1:", nlandmarks, "\n", sep = "")
       for (ii in 1:nlandmarks) {
         fix <- locator(n = 1, type = "p", col = "red", 
-                       cex = 4, pch = 3)
+                       cex = 4, pch = marker)
         selected[ii, 1] <- fix$x
         selected[ii, 2] <- fix$y
       }
