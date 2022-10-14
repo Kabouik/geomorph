@@ -53,7 +53,7 @@
 #' @export
 #' @author Dean Adams, Erik Otarola-Castillo and Emma Sherratt
 #' @seealso  \code{\link[jpeg]{readJPEG}} (for JPEG input)
-digitize2d <- function (filelist, nlandmarks, scale=NULL, tpsfile, MultScale=FALSE,verbose = TRUE) 
+digitize2d <- function (filelist, nlandmarks, scale=NULL, tpsfile, MultScale=FALSE, verbose = TRUE) 
 {
   flist <- dir()
   if (sum(which(flist == tpsfile)) == 0) {
@@ -107,8 +107,8 @@ digitize2d <- function (filelist, nlandmarks, scale=NULL, tpsfile, MultScale=FAL
       for (ii in 1:nlandmarks) {
         cat("Select landmark ", ii, "\n")
         keep <- ans <- NULL
-        fix <- locator(n = 1, type = "p", col = "black", 
-                       cex = 4, pch = 3, bg = "red")
+        fix <- locator(n = 1, type = "p", col = "red", 
+                       cex = 4, pch = 3)
         cat(paste("Keep Landmark ", ii, "(y/n/a)?"), 
             "\n")
         ans <- readLines(n = 1)
@@ -119,14 +119,14 @@ digitize2d <- function (filelist, nlandmarks, scale=NULL, tpsfile, MultScale=FAL
         if (ans == "a") {
           selected[ii, 1] <- NA
           selected[ii, 2] <- NA
-          points(fix, type = "n", col = "black", cex = 1, pch = 3, bg = "red")
+          points(fix, type = "n", col = "red", cex = 1, pch = 3)
         }
         if (ans == "n") {
           cat(paste("Select Landmark ", ii, " Again"), "\n")
         }
         while (ans == "n") {
-          fix <- locator(n = 1, type = "p", col = "black", 
-                         cex = 4, pch = 3, bg = "red")
+          fix <- locator(n = 1, type = "p", col = "red", 
+                         cex = 4, pch = 3)
           cat(paste("Keep Landmark ", ii, "(y/n)?"),  "\n")
           ans <- readLines(n = 1)
           if (ans == "y") {
@@ -142,8 +142,8 @@ digitize2d <- function (filelist, nlandmarks, scale=NULL, tpsfile, MultScale=FAL
     if (verbose == FALSE) {
       cat("Select landmarks 1:", nlandmarks, "\n", sep = "")
       for (ii in 1:nlandmarks) {
-        fix <- locator(n = 1, type = "p", col = "black", 
-                       cex = 4, pch = 3, bg = "red")
+        fix <- locator(n = 1, type = "p", col = "red", 
+                       cex = 4, pch = 3)
         selected[ii, 1] <- fix$x
         selected[ii, 2] <- fix$y
       }
