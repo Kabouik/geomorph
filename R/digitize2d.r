@@ -93,6 +93,7 @@ digitize2d <- function (filelist, nlandmarks, scale=NULL, tpsfile, MultScale=FAL
                                                         dim(specimen)[1], length.out = 10), type = "n",
                                                         asp = 1, tck = 0, xaxt = "n", yaxt = "n")
     rasterImage(specimen, 1, 1, dim(specimen)[2], dim(specimen)[1])
+    zm(type = "session")
     if (is.null(scale)) {
      cat("Scale not provided! Proceed with caution.\n") 
       scalebar = NULL
@@ -120,6 +121,7 @@ digitize2d <- function (filelist, nlandmarks, scale=NULL, tpsfile, MultScale=FAL
           selected[ii, 1] <- NA
           selected[ii, 2] <- NA
           points(fix, type = "n", col = "red", cex = 1, pch = 3)
+          zm(type = "session")
         }
         if (ans == "n") {
           cat(paste("Select Landmark ", ii, " Again"), "\n")
